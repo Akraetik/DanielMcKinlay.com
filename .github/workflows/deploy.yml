@@ -1,0 +1,74 @@
+# Deploys the site/ folder to S3 and refreshes the CloudFront cache.
+# Auth uses GitHub OIDC -> an IAM role. No AWS access keys are stored in GitHub.
+#
+# Required repository variables (Settings > Secrets and variables > Actions > Variables):
+#   AWS_ROLE_ARN                 e.g. arn:aws:iam::123456789012:role/github-deploy-danielmckinlay
+#   AWS_REGION                   e.g. us-west-2
+#   S3_BUCKET                    e.g. danielmckinlay.com-site
+#   CLOUDFRONT_DISTRIBUTION_ID   e.g. E1ABCDEF2GHIJK
+#
+# Until AWS_ROLE_ARN is set, the deploy job is skipped instead of failing.
+
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # needed to request the OIDC token
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          test -f site/index.html
+          test -f site/404.html
+          echo "Site files present."
+
+  deploy:
+    needs: validate
+    if: ${{ vars.AWS_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync HTML (short cache)
+        run: |
+          aws s3 sync site/ "s3://${{ vars.S3_BUCKET }}/" \
+            --delete \
+            --exclude "*" --include "*.html" \
+            --cache-control "public, max-age=300"
+
+      - name: Sync assets (long cache)
+        run: |
+          aws s3 sync site/ "s3://${{ vars.S3_BUCKET }}/" \
+            --delete \
+            --exclude "*.html" \
+            --cache-control "public, max-age=86400"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"
