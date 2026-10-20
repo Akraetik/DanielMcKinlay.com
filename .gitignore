@@ -1,0 +1,49 @@
+# ---- OS files ----
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---- Editors / IDEs ----
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Secrets and local config (never commit these) ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials
+.aws/
+
+# ---- Logs and temp ----
+*.log
+npm-debug.log*
+tmp/
+.cache/
+
+# ---- Node (if a build tool is added later) ----
+node_modules/
+dist/
+build/
+
+# ---- Terraform (if infrastructure-as-code is added later) ----
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+crash.log
+
+# ---- Local design exports (keep out of the repo) ----
+*.fig
+exports/
