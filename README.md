@@ -1,4 +1,4 @@
-# danielmckinlay.com
+# DanielMckinlay.com
 
 [![Deploy site](https://github.com/akraetik/danielmckinlay.com/actions/workflows/deploy.yml/badge.svg)](https://github.com/akraetik/danielmckinlay.com/actions/workflows/deploy.yml)
 
