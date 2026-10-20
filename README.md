@@ -1,4 +1,4 @@
-# danielmckinlay.com
+# DanielMckinlay.com
 
 Source code for my personal website, [danielmckinlay.com](https://danielmckinlay.com).
 
@@ -6,12 +6,14 @@ Source code for my personal website, [danielmckinlay.com](https://danielmckinlay
 
 🚧 Under construction. A placeholder page is live while the full site is designed.
 
+More coming. Be patient. Will add when I have time. 
+
 ## Stack
 
 - **Site:** static HTML and CSS
 - **Version control:** Git and GitHub
 - **Hosting (planned):** Amazon S3 behind Amazon CloudFront
-- **DNS:** Amazon Route 53, domain registered with Namecheap
+- **DNS:** Amazon Route 53, domain registered with NameCheap
 - **TLS:** AWS Certificate Manager
 
 ## Project structure
